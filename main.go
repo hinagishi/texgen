@@ -7,8 +7,15 @@ import (
 	"os/user"
 )
 
-func setHeader() string {
-	return "\\documentclass[a4j]{jarticle}\n"
+func setHeader(opt Options) string {
+	header := "\\documentclass["
+	if opt.PaperSize != "" {
+		header += opt.PaperSize
+	} else {
+		header += "a4j"
+	}
+	header += "]{jarticle}\n"
+	return header
 }
 
 func setPackages() string {
@@ -48,9 +55,11 @@ func usage() {
 }
 
 type Options struct {
-	Filename string
-	Author   string
-	Title    string
+	Filename   string
+	Author     string
+	Title      string
+	PaperSize  string
+	PapserType string
 }
 
 func main() {
@@ -67,11 +76,18 @@ func main() {
 			}
 			opt.Author = os.Args[i+1]
 			i++
+		} else if os.Args[i] == "-s" {
+			if i+1 >= len(os.Args) {
+				usage()
+				return
+			}
+			opt.PaperSize = os.Args[i+1]
+			i++
 		} else {
 			opt.Filename = os.Args[i]
 		}
 	}
-	fmt.Println(opt)
+
 	if opt.Filename == "" {
 		usage()
 		return
@@ -82,7 +98,7 @@ func main() {
 	}
 	defer wf.Close()
 	writer := bufio.NewWriter(wf)
-	writer.Write([]byte(setHeader()))
+	writer.Write([]byte(setHeader(opt)))
 	writer.Write([]byte(setMeta(opt)))
 	writer.Write([]byte(setPackages()))
 	writer.Write([]byte(setBody()))
