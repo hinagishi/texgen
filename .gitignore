@@ -1,3 +1,11 @@
 texgen
 *.tex
-
+*.aux
+*.dvi
+*.log
+*.pdf
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
