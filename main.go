@@ -42,8 +42,11 @@ func setPackages(opt Options) string {
 	return pkg
 }
 
-func setBody() string {
+func setBody(opt Options) string {
 	body := "\\begin{document}\n\n"
+	if opt.PaperType == "beamer" {
+		body += "\\frame{\\titlepage}\n"
+	}
 	body += "\\end{document}\n"
 	return body
 }
@@ -66,6 +69,13 @@ func setMeta(opt Options) string {
 	}
 	meta += "\n\\title{no-title}\n"
 	return meta
+}
+
+func setTheme(opt Options) string {
+	theme := "\\usetheme{Madrid}\n"
+	theme += "\\usefonttheme{professionalfonts}\n"
+	theme += "\\useinnertheme{circles}\n"
+	return theme
 }
 
 func usage() {
@@ -126,6 +136,9 @@ func main() {
 	writer.Write([]byte(setHeader(opt)))
 	writer.Write([]byte(setMeta(opt)))
 	writer.Write([]byte(setPackages(opt)))
-	writer.Write([]byte(setBody()))
+	if opt.PaperType == "beamer" {
+		writer.Write([]byte(setTheme(opt)))
+	}
+	writer.Write([]byte(setBody(opt)))
 	writer.Flush()
 }
