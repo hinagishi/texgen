@@ -9,3 +9,7 @@ texgen
 *.snm
 *.toc
 *.vrb
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
