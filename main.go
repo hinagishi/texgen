@@ -7,6 +7,16 @@ import (
 	"os/user"
 )
 
+type Options struct {
+	Filename  string
+	Author    string
+	Title     string
+	PaperSize string
+	PaperType string
+	Inst      string
+	InstAbbr  string
+}
+
 func setHeader(opt Options) string {
 	header := "\\documentclass["
 	if opt.PaperType == "beamer" {
@@ -67,6 +77,9 @@ func setMeta(opt Options) string {
 			meta += us.Username + "}"
 		}
 	}
+	if opt.PaperType == "beamer" && opt.Inst != "" {
+		meta += "\n\\institute{" + opt.Inst + "}\n"
+	}
 	meta += "\n\\title{no-title}\n"
 	return meta
 }
@@ -80,14 +93,6 @@ func setTheme(opt Options) string {
 
 func usage() {
 	fmt.Println("Usage texgen [options] filename")
-}
-
-type Options struct {
-	Filename  string
-	Author    string
-	Title     string
-	PaperSize string
-	PaperType string
 }
 
 func main() {
@@ -110,6 +115,13 @@ func main() {
 				return
 			}
 			opt.PaperSize = os.Args[i+1]
+			i++
+		} else if os.Args[i] == "-i" {
+			if i+1 >= len(os.Args) {
+				usage()
+				return
+			}
+			opt.Inst = os.Args[i+1]
 			i++
 		} else if os.Args[i] == "-t" {
 			if i+1 >= len(os.Args) {
