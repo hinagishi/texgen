@@ -57,6 +57,9 @@ func setBody(opt Options) string {
 	if opt.PaperType == "beamer" {
 		body += "\\frame{\\titlepage}\n"
 	}
+	body += "\n"
+	body += "\\begin{thebibliography}{99}\n\n"
+	body += "\\end{thebibliography}\n"
 	body += "\\end{document}\n"
 	return body
 }
