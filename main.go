@@ -108,6 +108,18 @@ func usage() {
 	fmt.Println("Usage texgen [options] filename")
 }
 
+func help() {
+	fmt.Println("texgen is a tool to create a latex template file\n")
+	usage()
+	fmt.Println("")
+	fmt.Println("The commands are:")
+	fmt.Println("\t-t\tspecify paper type (ex:article, jarticle, beamer)")
+	fmt.Println("\t-u\tspecify paper author")
+	fmt.Println("\t-i\tspecify institute")
+	fmt.Println("\t-s\tspecify paper size (ex:a4, a4j)")
+	fmt.Println("\t-h\tshow help")
+}
+
 func main() {
 	var opt Options
 	if len(os.Args) < 2 {
@@ -143,6 +155,9 @@ func main() {
 			}
 			opt.PaperType = os.Args[i+1]
 			i++
+		} else if os.Args[i] == "-h" {
+			help()
+			return
 		} else {
 			opt.Filename = os.Args[i]
 		}
