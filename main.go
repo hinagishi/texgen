@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"os"
 	"os/user"
+	"strings"
 )
 
 type Options struct {
 	Filename  string
+	BaseName  string
 	Author    string
 	Title     string
 	PaperSize string
@@ -55,13 +57,21 @@ func setPackages(opt Options) string {
 func setBody(opt Options) string {
 	body := "\\begin{document}\n\n"
 	if opt.PaperType == "beamer" {
-		body += "\\frame{\\titlepage}\n"
+		body += "\\frame{\\titlepage}\n\n"
+	} else {
+		body += "\\bibliographystyle{plain}\n"
+		body += "\\bibliography{" + opt.BaseName + "}\n"
 	}
-	body += "\n"
-	body += "\\begin{thebibliography}{99}\n\n"
-	body += "\\end{thebibliography}\n"
 	body += "\\end{document}\n"
 	return body
+}
+
+func createBibtex(opt Options) {
+	wf, err := os.OpenFile(opt.BaseName+".bib", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return
+	}
+	defer wf.Close()
 }
 
 func setMeta(opt Options) string {
@@ -141,6 +151,17 @@ func main() {
 	if opt.Filename == "" {
 		usage()
 		return
+	}
+
+	if opt.PaperType != "beamer" {
+		elm := strings.Split(opt.Filename, ".")
+		for i := 0; i < len(elm)-1; i++ {
+			if i != 0 {
+				opt.BaseName += "."
+			}
+			opt.BaseName += elm[i]
+		}
+		createBibtex(opt)
 	}
 	wf, err := os.OpenFile(opt.Filename, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
